@@ -42,14 +42,14 @@ public class AuthService {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
+                            request.email(),
+                            request.password()
                     )
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            User user = userRepository.findByEmail(request.getEmail())
+            User user = userRepository.findByEmail(request.email())
                     .orElseThrow(() -> new RuntimeException("Invalid credentials"));
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
             String token = jwtService.generateToken(userDetails);
@@ -60,7 +60,7 @@ public class AuthService {
                     .fullName(user.getFullName())
                     .email(user.getEmail())
                     .role(user.getRole())
-                    .isActive(user.getIsActive())
+                    .isActive(user.isActive())
                     .createdAt(user.getCreatedAt())
                     .message("Login successful")
                     .success(true)
@@ -77,9 +77,9 @@ public class AuthService {
         }
 
         User user = User.builder()
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .fullName(request.fullName())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
                 .role(Role.USER)
                 .isActive(true)
                 .build();
@@ -96,7 +96,7 @@ public class AuthService {
                 .fullName(savedUser.getFullName())
                 .email(savedUser.getEmail())
                 .role(savedUser.getRole())
-                .isActive(savedUser.getIsActive())
+                .isActive(savedUser.isActive())
                 .createdAt(savedUser.getCreatedAt())
                 .message("Registration successful")
                 .success(true)
